@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Mug Club Chart</title>
+  <title>Argenta Mug Club</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
@@ -11,7 +11,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
+      min-height: 100vh;
       font-family: Arial, sans-serif;
     }
 
@@ -21,7 +21,14 @@
       align-items: center;
       width: 100%;
       max-width: 900px;
-      padding: 16px;
+      padding: 24px 16px;
+    }
+
+    h1 {
+      margin: 0 0 16px;
+      font-size: 1.75rem;
+      font-weight: 600;
+      text-align: center;
     }
 
     iframe {
@@ -31,21 +38,24 @@
     }
 
     .actions {
-      margin-top: 16px;
+      margin-top: 20px;
       display: flex;
       gap: 16px;
-      flex-wrap: wrap;
+      width: 100%;
       justify-content: center;
     }
 
     .button-link {
       display: inline-block;
-      padding: 10px 18px;
+      padding: 12px 18px;
       border-radius: 6px;
       background-color: #1a73e8;
       color: #ffffff;
       text-decoration: none;
       font-weight: 600;
+      text-align: center;
+      flex: 1;
+      max-width: 260px;
       transition: background-color 0.2s ease, transform 0.1s ease;
     }
 
@@ -64,17 +74,35 @@
     }
 
     .disclaimer {
-      margin-top: 14px;
+      margin-top: 16px;
       max-width: 700px;
       font-size: 0.85rem;
       color: #555;
       text-align: center;
       line-height: 1.4;
     }
+
+    /* Mobile adjustments */
+    @media (max-width: 600px) {
+      iframe {
+        height: 480px;
+      }
+
+      .actions {
+        flex-direction: column;
+      }
+
+      .button-link {
+        max-width: none;
+        width: 100%;
+      }
+    }
   </style>
 </head>
 <body>
   <div class="container">
+    <h1>Argenta Mug Club</h1>
+
     <iframe
       src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQbHxXrsnvOmOrO26tR0WOw2oZ0dILhWWct9Plg6saV1HdFlKTIjn_16WrHqsypskRRZZQPRNZwA3O0/pubchart?oid=179754027&format=interactive">
     </iframe>
@@ -99,8 +127,7 @@
 
     <div class="disclaimer">
       <!-- Add disclaimer language here -->
-      <!-- Example: Data shown reflects submissions received during the selected period and may be updated retroactively. -->
-      Not affiliated with Argenta Brewing Company - just some folks who like doing paperwork with their beers :)
+      Not affiliated with Argenta Brewing Company - just some folks who like to do paperwork with their beers :)
     </div>
   </div>
 </body>
