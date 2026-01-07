@@ -8,93 +8,131 @@
     body {
       margin: 0;
       background: #fff;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
       font-family: Arial, sans-serif;
     }
 
     .container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       width: 100%;
       max-width: 900px;
-      padding: 24px 16px;
+      margin: 0 auto;
+      padding: 20px 16px 28px;
     }
 
     h1 {
-      margin: 0 0 16px;
+      margin: 8px 0 14px;
       font-size: 1.75rem;
       font-weight: 600;
       text-align: center;
     }
 
-    iframe {
-      border: none;
+    /* Chart wrapper */
+    .chart-wrap {
+      position: relative;
       width: 100%;
-      height: 600px;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid #eee;
+      background: #fff;
     }
 
-    .actions {
-      margin-top: 20px;
-      display: flex;
-      gap: 16px;
+    /* A more page-friendly height */
+    .chart-wrap iframe {
       width: 100%;
+      height: 520px;
+      border: 0;
+      display: block;
+      pointer-events: none; /* default: let the page scroll */
+    }
+
+    /* Overlay that invites tap to enable interaction */
+    .chart-overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: flex-end;
       justify-content: center;
+      padding: 10px;
+      background: linear-gradient(to top, rgba(255,255,255,0.92), rgba(255,255,255,0));
+      cursor: pointer;
+    }
+
+    .chart-overlay .hint {
+      font-size: 0.9rem;
+      background: rgba(26, 115, 232, 0.12);
+      color: #1a73e8;
+      border: 1px solid rgba(26, 115, 232, 0.25);
+      padding: 8px 10px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    /* When chart is enabled, allow iframe interaction and hide overlay */
+    .chart-wrap.enabled iframe {
+      pointer-events: auto;
+    }
+    .chart-wrap.enabled .chart-overlay {
+      display: none;
+    }
+
+    /* Buttons */
+    .actions {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      width: 100%;
     }
 
     .button-link {
-      display: inline-block;
-      padding: 12px 18px;
-      border-radius: 6px;
-      background-color: #1a73e8;
-      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 16px;
+      border-radius: 10px;
+      background: #1a73e8;
+      color: #fff;
       text-decoration: none;
-      font-weight: 600;
-      text-align: center;
-      flex: 1;
-      max-width: 260px;
-      transition: background-color 0.2s ease, transform 0.1s ease;
+      font-weight: 700;
+      min-width: 180px;
+      transition: transform 0.1s ease, background-color 0.2s ease;
     }
 
     .button-link:hover {
-      background-color: #1558b0;
+      background: #1558b0;
       transform: translateY(-1px);
     }
 
     .button-link.secondary {
-      background-color: #e8f0fe;
+      background: #e8f0fe;
       color: #1a73e8;
     }
-
     .button-link.secondary:hover {
-      background-color: #d2e3fc;
+      background: #d2e3fc;
     }
 
     .disclaimer {
-      margin-top: 16px;
-      max-width: 700px;
+      margin: 14px auto 0;
+      max-width: 760px;
       font-size: 0.85rem;
       color: #555;
       text-align: center;
       line-height: 1.4;
     }
 
-    /* Mobile adjustments */
+    /* Mobile tweaks */
     @media (max-width: 600px) {
-      iframe {
-        height: 480px;
+      .chart-wrap iframe {
+        height: 420px;
       }
 
       .actions {
         flex-direction: column;
+        align-items: stretch;
       }
 
       .button-link {
-        max-width: none;
         width: 100%;
+        min-width: 0;
       }
     }
   </style>
@@ -103,9 +141,16 @@
   <div class="container">
     <h1>Argenta Mug Club</h1>
 
-    <iframe
-      src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQbHxXrsnvOmOrO26tR0WOw2oZ0dILhWWct9Plg6saV1HdFlKTIjn_16WrHqsypskRRZZQPRNZwA3O0/pubchart?oid=179754027&format=interactive">
-    </iframe>
+    <div class="chart-wrap" id="chartWrap">
+      <iframe
+        title="Mug Club Chart"
+        src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQbHxXrsnvOmOrO26tR0WOw2oZ0dILhWWct9Plg6saV1HdFlKTIjn_16WrHqsypskRRZZQPRNZwA3O0/pubchart?oid=179754027&format=interactive">
+      </iframe>
+
+      <div class="chart-overlay" id="chartOverlay" role="button" aria-label="Tap to interact with chart">
+        <div class="hint">Tap to interact with chart</div>
+      </div>
+    </div>
 
     <div class="actions">
       <a
@@ -127,8 +172,37 @@
 
     <div class="disclaimer">
       <!-- Add disclaimer language here -->
-      Not affiliated with Argenta Brewing Company - just some folks who like to do paperwork with their beers :)
+      Not affiliated with Argenta Brewing Company - just some folks who like doing paperwork with their beers :)
     </div>
   </div>
+
+  <script>
+    // Enable chart interaction on tap; disable when tapping outside the chart.
+    const chartWrap = document.getElementById('chartWrap');
+    const chartOverlay = document.getElementById('chartOverlay');
+
+    function enableChart() {
+      chartWrap.classList.add('enabled');
+    }
+
+    function disableChart() {
+      chartWrap.classList.remove('enabled');
+    }
+
+    chartOverlay.addEventListener('click', (e) => {
+      e.stopPropagation();
+      enableChart();
+    });
+
+    // Tap/click anywhere outside the chart to return to normal page scrolling
+    document.addEventListener('click', (e) => {
+      if (!chartWrap.contains(e.target)) disableChart();
+    });
+
+    // On touch devices, touching outside should also disable
+    document.addEventListener('touchstart', (e) => {
+      if (!chartWrap.contains(e.target)) disableChart();
+    }, { passive: true });
+  </script>
 </body>
 </html>
